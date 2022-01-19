@@ -16,7 +16,7 @@ router.post("/register", validInfo, async (req, res) => {
     ]);
 
     if (user.rows.length !== 0) {
-      return res.status(401).send("User already exists");
+      return res.status(401).json("User already exists");
     }
 
     // bcrypt the user password

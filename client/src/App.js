@@ -1,5 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import "./App.css";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import {
   BrowserRouter as Router,
@@ -12,6 +14,8 @@ import {
 import Dashboard from "./components/Dashboard";
 import Register from "./components/Register";
 import Login from "./components/Login";
+
+toast.configure();
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
