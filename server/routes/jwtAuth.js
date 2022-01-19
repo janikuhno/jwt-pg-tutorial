@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const pool = require("../db");
 const bcrypt = require("bcrypt");
+const jwtGenerator = require("../utils/jwtGenerator");
 
-// registering
+// register
 router.post("/register", async (req, res) => {
   try {
     // destructure the req.body (name, email, password)
@@ -29,10 +30,46 @@ router.post("/register", async (req, res) => {
     );
 
     // generate jwt token
-    
+    const token = jwtGenerator(newUser.rows[0].user_id);
+
+    res.json({ token });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
+  }
+});
+
+// login route
+router.post("/login", async (req, res) => {
+  try {
+    // destructure the req.body
+    const { email, password } = req.body;
+
+    // check if user does not exist, if not then throw error
+    const user = await pool.query("SELECT * FROM users WHERE user_email = $1", [
+      email,
+    ]);
+
+    if (user.rows.length === 0) {
+      return res.status(401).json("Password or email is incorrect!");
+    }
+
+    // check if incoming password is the same as the database password
+    const validPassword = await bcrypt.compare(
+      password,
+      user.rows[0].user_password
+    );
+
+    if (!validPassword) {
+      return res.status(401).json("Password or email is incorrect!");
+    }
+
+    // give them the jwt token
+    const token = jwtGenerator(user.rows[0].user_id);
+
+    res.json({ token });
+  } catch (err) {
+    console.error(err.message);
   }
 });
 
