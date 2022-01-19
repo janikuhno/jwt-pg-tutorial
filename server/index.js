@@ -8,6 +8,8 @@ app.use(express.json()); //req.body
 app.use(cors());
 
 // Routes
+// register and login routes
+app.use("/auth", require("./routes/jwtAuth"));
 
 app.listen(PORT, () => {
   console.log(`Server is listening on ${PORT}`);
